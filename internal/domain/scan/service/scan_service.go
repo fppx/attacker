@@ -89,8 +89,10 @@ func (s *scanService) Scan(cidr string) ([]value.IpMac, error) {
 	results := make([]value.IpMac, 0)
 	for r := range resultsCh {
 		results = append(results, value.IpMac{
-			IP:  strings.ToUpper(r.IP),
-			MAC: strings.ToUpper(r.MAC),
+			IP:     strings.ToUpper(r.IP),
+			MAC:    strings.ToUpper(r.MAC),
+			ReqIp:  strings.ToUpper(r.ReqIp),
+			ReqMac: strings.ToUpper(r.ReqMac),
 		})
 	}
 

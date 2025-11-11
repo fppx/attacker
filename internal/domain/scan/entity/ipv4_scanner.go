@@ -37,13 +37,20 @@ func (s *IPv4Scanner) ProcessPacket(packet gopacket.Packet, seen map[string]stru
 	if l := packet.Layer(layers.LayerTypeARP); l != nil {
 		arp := l.(*layers.ARP)
 		if arp.Operation == layers.ARPReply {
+			// 检查这个 ARP 回复是否是回应我们发送的请求
+			// ARP 回复中的 DstProtAddress 应该是我们发送请求时的 SourceProtAddress（我们的 IP）
+			dstIP := net.IP(arp.DstProtAddress).String()
+			dstMac := net.HardwareAddr(arp.DstHwAddress).String()
+
 			ipStr := net.IP(arp.SourceProtAddress).String()
 			macStr := net.HardwareAddr(arp.SourceHwAddress).String()
 			if _, ok := seen[ipStr]; !ok {
 				seen[ipStr] = struct{}{}
 				resultsCh <- value.IpMac{
-					IP:  ipStr,
-					MAC: macStr,
+					IP:     ipStr,
+					MAC:    macStr,
+					ReqIp:  dstIP,
+					ReqMac: dstMac,
 				}
 			}
 		}

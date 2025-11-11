@@ -158,10 +158,10 @@ func main() {
 
 	fmt.Println("扫描结果:")
 	fmt.Println(strings.Repeat("-", totalWidth))
-	fmt.Printf("%-*s %-*s\n", ipWidth, "IP地址", macWidth, "MAC地址")
+	fmt.Printf("%-*s %-*s %-*s %-*s\n", ipWidth, "IP地址", macWidth, "MAC地址", ipWidth, "请求者IP", macWidth, "请求者MAC")
 	fmt.Println(strings.Repeat("-", totalWidth))
 	for _, result := range results {
-		fmt.Printf("%-*s %-*s\n", ipWidth, result.IP, macWidth, result.MAC)
+		fmt.Printf("%-*s %-*s %-*s %-*s\n", ipWidth, result.IP, macWidth, result.MAC, ipWidth, result.ReqIp, macWidth, result.ReqMac)
 	}
 	fmt.Println(strings.Repeat("-", totalWidth))
 	fmt.Printf("共发现 %d 个设备\n", len(results))

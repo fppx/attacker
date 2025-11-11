@@ -119,25 +119,23 @@ func (s *IPv6Scanner) hostRange() []net.IP {
 	mask := s.ipNet.Mask
 
 	ones, _ := mask.Size()
-	if ones > 120 {
-		return []net.IP{network}
-	}
-
 	targets := make([]net.IP, 0)
-	for i := 1; i <= 256 && i < (1<<(128-ones)); i++ {
+	//最多12万的ip探测，一般局域网不会多余该数
+	for i := 1; i < (1<<(128-ones)) && i <= 128000; i++ {
 		target := make(net.IP, 16)
 		copy(target, network)
 
 		hostPart := uint64(i)
+		//uint64无法与[]byte直接位运算，所以一个一个字节进行运算
 		for j := 15; j >= 0 && hostPart > 0; j-- {
 			target[j] = byte(hostPart & 0xff)
 			hostPart >>= 8
 		}
 
+		//hostPort第一次运算时，会固定替换8个字节的位置，所以这里要恢复
 		for j := 0; j < 16; j++ {
-			target[j] = (target[j] & mask[j]) | (network[j] & ^mask[j])
+			target[j] = (target[j] & ^mask[j]) | (network[j] & mask[j])
 		}
-
 		targets = append(targets, target)
 	}
 
